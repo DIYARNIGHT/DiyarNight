@@ -1,0 +1,8 @@
+address_id,city,district,fiber,vdsl,adsl,max_speed_mbps
+A1,Istanbul,Kadikoy,1,1,0,200
+A2,Ankara,Cankaya,0,1,1,50
+A3,Izmir,Bornova,1,1,0,1000
+A4,Bursa,Nilufer,0,1,1,100
+A5,Antalya,Muratpasa,1,0,0,1000
+A6,Adana,Seyhan,1,1,1,200
+A7,Gaziantep,Sahinbey,0,1,1,75

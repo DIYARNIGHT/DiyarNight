@@ -1,0 +1,6 @@
+user_id,name,address_id,current_plan_id,modem_mac
+U1,Ayşe Kaya,A1,P100,00:11:22:33:44:55
+U2,Mehmet Yılmaz,A2,P035,00:11:22:33:44:66
+U3,Fatma Demir,A3,P200,00:11:22:33:44:77
+U4,Ali Öztürk,A4,P100,00:11:22:33:44:88
+U5,Zeynep Şahin,A5,P1000,00:11:22:33:44:99

@@ -1,0 +1,97 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* SmartNet Brand Colors - Sarı Siyah Uyumlu */
+:root {
+  --smartnet-yellow: #fbbf24;
+  --smartnet-dark-yellow: #f59e0b;
+  --smartnet-light-yellow: #fde047;
+  --smartnet-black: #1f2937;
+  --smartnet-dark-black: #111827;
+  --smartnet-gray: #f9fafb;
+  --smartnet-dark-gray: #374151;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--turkcell-red);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--turkcell-dark-red);
+}
+
+/* Türkcel specific components */
+.turkcell-card {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300;
+}
+
+.turkcell-button {
+  @apply bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+}
+
+.turkcell-button-outline {
+  @apply border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200;
+}
+
+.turkcell-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200;
+}
+
+.turkcell-gradient {
+  background: linear-gradient(135deg, #e60012 0%, #ff1a2e 100%);
+}
+
+.turkcell-gradient-soft {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+}
+
+/* Loading animation */
+.turkcell-loading {
+  @apply inline-block w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin;
+}
+
+/* Success states */
+.success-pulse {
+  animation: success-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes success-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .8;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .turkcell-card {
+    @apply rounded-lg shadow-md;
+  }
+  
+  .turkcell-button {
+    @apply py-2 px-4 text-sm;
+  }
+}

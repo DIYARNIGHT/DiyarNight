@@ -1,0 +1,6 @@
+ticket_id,user_id,created_at,issue,status
+T-1001,U1,2025-10-05T09:10:00Z,Düşük hız,open
+T-1002,U2,2025-10-04T14:20:00Z,Bağlantı kesilmesi,resolved
+T-1003,U3,2025-10-03T11:45:00Z,Modem sorunu,in_progress
+T-1004,U4,2025-10-02T16:30:00Z,İnternet yavaş,resolved
+T-1005,U1,2025-10-01T08:15:00Z,Faturalandırma sorunu,closed
