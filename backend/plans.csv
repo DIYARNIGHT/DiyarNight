@@ -1,4 +1,4 @@
-plan_id,name,quota_gb,speed_mbps,monthly_price
+﻿plan_id,name,quota_gb,speed_mbps,monthly_price
 P100,Fiber 100,300,100,399
 P200,Fiber 200,500,200,499
 P035,VDSL 35,200,35,329

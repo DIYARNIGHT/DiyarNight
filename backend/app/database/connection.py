@@ -52,7 +52,17 @@ async def load_csv_data():
         for collection_name, csv_file in csv_files.items():
             file_path = os.path.join(base_path, csv_file)
             if os.path.exists(file_path):
-                df = pd.read_csv(file_path)
+                # Try different encodings for Turkish characters
+                try:
+                    df = pd.read_csv(file_path, encoding='utf-8')
+                except UnicodeDecodeError:
+                    try:
+                        df = pd.read_csv(file_path, encoding='windows-1254')
+                    except UnicodeDecodeError:
+                        try:
+                            df = pd.read_csv(file_path, encoding='iso-8859-9')
+                        except UnicodeDecodeError:
+                            df = pd.read_csv(file_path, encoding='latin1')
                 
                 # Convert DataFrame to dict
                 records = df.to_dict('records')

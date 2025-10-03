@@ -1,12 +1,21 @@
 <template>
-  <div class="space-y-6">
+  <!-- Loading State -->
+  <div v-if="!isAuthenticated" class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+      <p class="text-gray-600">Giriş kontrol ediliyor...</p>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div v-else class="space-y-6">
     <!-- Welcome Header -->
     <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl text-white p-8">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
-          <h1 class="text-3xl font-bold mb-2">Hoş geldiniz, {{ userDashboard?.user?.name }}!</h1>
+          <h1 class="text-3xl font-bold mb-2">Hoş geldiniz, {{ currentUser?.name || 'Kullanıcı' }}!</h1>
           <p class="text-gray-300 text-lg">
-            {{ userDashboard?.current_plan?.name }} paketinizle internete hızla bağlı kalın
+            {{ userDashboard?.current_plan?.name || 'Paket bilgisi yükleniyor...' }} paketinizle internete hızla bağlı kalın
           </p>
         </div>
         <div class="mt-4 md:mt-0 flex space-x-4">
@@ -17,6 +26,13 @@
           >
             <Icon v-if="speedTestLoading" name="heroicons:arrow-path" class="w-5 h-5 animate-spin mr-2" />
             {{ speedTestLoading ? 'Test Yapılıyor...' : 'Hız Testi' }}
+          </button>
+          <button 
+            @click="logout"
+            class="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+          >
+            <Icon name="heroicons:arrow-right-on-rectangle" class="w-5 h-5 mr-2" />
+            Çıkış
           </button>
         </div>
       </div>
@@ -289,10 +305,72 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> <!-- Authenticated content end -->
 </template>
 
 <script setup>
+// Authentication check
+const isAuthenticated = ref(false)
+const currentUser = ref(null)
+
+// Check authentication on page load
+onMounted(async () => {
+  await checkAuth()
+  if (isAuthenticated.value) {
+    await fetchDashboardData()
+  }
+})
+
+const checkAuth = async () => {
+  try {
+    const token = localStorage.getItem('auth_token')
+    const user = localStorage.getItem('user')
+    
+    if (!token || !user) {
+      window.location.href = '/login'
+      return
+    }
+    
+    try {
+      const userData = JSON.parse(user)
+      isAuthenticated.value = true
+      currentUser.value = userData
+    } catch (error) {
+      console.error('User data parse error:', error)
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('user')
+      window.location.href = '/login'
+    }
+    
+  } catch (error) {
+    console.error('Auth check failed:', error)
+    window.location.href = '/login'
+  }
+}
+
+const logout = async () => {
+  try {
+    const token = localStorage.getItem('auth_token')
+    
+    if (token) {
+      // Call logout endpoint
+      await $fetch(`${apiBase}/auth/logout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+    }
+  } catch (error) {
+    console.error('Logout error:', error)
+  } finally {
+    // Clear local storage and redirect with page reload
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('user')
+    window.location.href = '/login'
+  }
+}
+
 // Sayfa başlığı
 useHead({
   title: 'Dashboard - SmartNet'
@@ -331,23 +409,28 @@ const maxUsage = computed(() => {
 // Methods
 const fetchDashboardData = async () => {
   try {
+    const userId = currentUser.value?.user_id || 'U1'  // Demo fallback
+    const token = localStorage.getItem('auth_token')
+    
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : {}
+    
     // Dashboard verilerini çek
-    const dashboardResponse = await $fetch(`${apiBase}/users/U1/dashboard`)
+    const dashboardResponse = await $fetch(`${apiBase}/users/${userId}/dashboard`, { headers })
     userDashboard.value = dashboardResponse
     
     // Aylık kullanım verilerini çek
-    const monthlyResponse = await $fetch(`${apiBase}/usage/U1/monthly`)
+    const monthlyResponse = await $fetch(`${apiBase}/usage/${userId}/monthly`, { headers })
     monthlyUsage.value = monthlyResponse
     
     // Son kullanım verilerini çek
-    const usageResponse = await $fetch(`${apiBase}/usage/U1/daily?days=7`)
+    const usageResponse = await $fetch(`${apiBase}/usage/${userId}/daily?days=7`, { headers })
     recentUsage.value = usageResponse.reverse() // Tarihe göre sırala
     
   } catch (error) {
     console.error('Dashboard verileri yüklenirken hata:', error)
     // Hata durumunda varsayılan veriler
     userDashboard.value = {
-      user: { name: 'Kullanıcı' },
+      user: { name: currentUser.value?.name || 'Kullanıcı' },
       current_plan: { name: 'Fiber 100', speed_mbps: 100, quota_gb: 300, monthly_price: 399 }
     }
     monthlyUsage.value = { total_usage_gb: 240 }
@@ -424,8 +507,11 @@ const formatDate = (dateString) => {
   return date.getDate() + '/' + (date.getMonth() + 1)
 }
 
-// Sayfa yüklendiğinde verileri çek
-onMounted(() => {
-  fetchDashboardData()
+// Sayfa yüklendiğinde authentication kontrolü ve verileri çek
+onMounted(async () => {
+  await checkAuth()
+  if (isAuthenticated.value) {
+    await fetchDashboardData()
+  }
 })
 </script>

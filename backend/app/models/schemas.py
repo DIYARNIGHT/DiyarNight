@@ -92,3 +92,37 @@ class SpeedTestResponse(BaseModel):
     upload_speed: float
     ping: float
     timestamp: str
+
+# Authentication Models
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class LoginResponse(BaseModel):
+    success: bool
+    message: str
+    token: Optional[str] = None
+    user: Optional[dict] = None
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    name: str
+    email: str
+    phone: str
+
+class RegisterResponse(BaseModel):
+    success: bool
+    message: str
+    user_id: Optional[str] = None
+
+class UserProfile(BaseModel):
+    user_id: str
+    username: str
+    name: str
+    email: str
+    phone: Optional[str] = None
+    role: str = "user"
+    current_plan_id: Optional[str] = None
+    address_id: Optional[str] = None
+    created_at: Optional[str] = None
